@@ -54,7 +54,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen overflow-x-hidden">
       <div className="absolute top-2 right-2 p-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -77,7 +77,7 @@ export default function Home() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex flex-col sm:flex-row items-center justify-center">
+      <div className="flex flex-col sm:flex-row items-center justify-center px-4 sm:px-0">
         <Space wrap>
           <InputNumber size="large" min={1} max={120} defaultValue={30} onChange={value => {
             if (value !== null) {
