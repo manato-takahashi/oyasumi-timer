@@ -20,45 +20,37 @@ import {
 declare global {
   interface Window {
     onYouTubeIframeAPIReady: () => void;
-    YT: any;
   }
 }
 
 
 export default function Home() {
   const { setTheme } = useTheme()
-  const playerRef = useRef(null);
+  const playerRef = useRef<YouTube>(null);
   const videoId = '4SIfagZps6w';
-  const [countdown, setCountdown] = useState(30);
   const [inputValue, setInputValue] = useState(30);
 
   useEffect(() => {
-    window.onYouTubeIframeAPIReady = () => {
-      playerRef.current = new window.YT.Player('player', {
-        videoId: videoId,
-      });
-    };
-
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    if (firstScriptTag && firstScriptTag.parentNode) {
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
   }, []);
 
-  useEffect(() => {
-    if (countdown === 0 && playerRef.current && typeof playerRef.current.stopVideo === 'function') {
-      playerRef.current.stopVideo();
+  const handleClick = async () => {
+    if (playerRef.current) {
+      const player = await playerRef.current.getInternalPlayer();
+      player.playVideo();
+  
+      setTimeout(async () => {
+        if (playerRef.current) {
+          const player = await playerRef.current.getInternalPlayer();
+          player.stopVideo();
+        }
+      }, inputValue * 60000);
     }
-  }, [countdown]);
-
-  const handleClick = () => {
-    playerRef.current.playVideo();
-    console.log('handleClick');
-
-    setTimeout(() => {
-      console.log('stopVideo');
-      playerRef.current.stopVideo();
-    }, inputValue * 60000); // inputValueの値（分）後に動画を停止（1分=60000ミリ秒）
   };
 
   return (
@@ -87,7 +79,11 @@ export default function Home() {
       </div>
       <div className="flex items-center justify-center">
         <Space wrap>
-          <InputNumber size="large" min={1} max={120} defaultValue={30} onChange={value => setInputValue(value)} />
+          <InputNumber size="large" min={1} max={120} defaultValue={30} onChange={value => {
+            if (value !== null) {
+              setInputValue(value);
+            }
+          }} />
         </Space>
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pl-2">
           min.
@@ -97,7 +93,7 @@ export default function Home() {
         <Button onClick={handleClick}>Oyasumi!</Button>
       </div>
       <div className="flex items-center justify-center pt-4">
-        <YouTube videoId={videoId} ref={playerRef} id="player"/>
+        <YouTube videoId={videoId} ref={playerRef} />
       </div>
     </div>
   );
