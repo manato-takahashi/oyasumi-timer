@@ -24,21 +24,18 @@ declare global {
   }
 }
 
-// グローバルスコープでonYouTubeIframeAPIReadyを定義
-// window.onYouTubeIframeAPIReady = () => {};
 
 export default function Home() {
   const { setTheme } = useTheme()
   const playerRef = useRef(null);
   const videoId = '4SIfagZps6w';
   const [countdown, setCountdown] = useState(30);
+  const [inputValue, setInputValue] = useState(30);
 
   useEffect(() => {
     window.onYouTubeIframeAPIReady = () => {
       playerRef.current = new window.YT.Player('player', {
-        events: {
-          'onReady': onPlayerReady,
-        }
+        videoId: videoId,
       });
     };
 
@@ -54,22 +51,14 @@ export default function Home() {
     }
   }, [countdown]);
 
-  const onPlayerReady = (event) => {
-    event.target.playVideo();
-  }
-
   const handleClick = () => {
-    setCountdown(30);
+    playerRef.current.playVideo();
     console.log('handleClick');
-    const intervalId = setInterval(() => {
-      setCountdown(prevCountdown => {
-        if (prevCountdown <= 1) {
-          clearInterval(intervalId);
-          return 0;
-        }
-        return prevCountdown - 1;
-      });
-    }, 60000); // 1分ごとにカウントダウン
+
+    setTimeout(() => {
+      console.log('stopVideo');
+      playerRef.current.stopVideo();
+    }, inputValue * 60000); // inputValueの値（分）後に動画を停止（1分=60000ミリ秒）
   };
 
   return (
@@ -98,7 +87,7 @@ export default function Home() {
       </div>
       <div className="flex items-center justify-center">
         <Space wrap>
-          <InputNumber size="large" min={1} max={120} defaultValue={30} onChange={value => setCountdown(value)} />
+          <InputNumber size="large" min={1} max={120} defaultValue={30} onChange={value => setInputValue(value)} />
         </Space>
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pl-2">
           min.
