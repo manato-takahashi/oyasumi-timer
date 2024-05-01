@@ -77,7 +77,7 @@ export default function Home() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex flex-col sm:flex-row items-center justify-center">
         <Space wrap>
           <InputNumber size="large" min={1} max={120} defaultValue={30} onChange={value => {
             if (value !== null) {
@@ -92,8 +92,8 @@ export default function Home() {
       <div className="flex items-center justify-center pt-4">
         <Button onClick={handleClick}>Oyasumi!</Button>
       </div>
-      <div className="flex items-center justify-center pt-4">
-        <YouTube videoId={videoId} ref={playerRef} />
+      <div className="flex items-center justify-center pt-4 aspect-w-16 aspect-h-9 max-w-full">
+        <YouTube videoId={videoId} ref={playerRef} className="w-full h-full" />
       </div>
     </div>
   );
