@@ -9,6 +9,7 @@ import YouTube from "react-youtube";
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
  
+// shadcn-ui components
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -16,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
 
 declare global {
   interface Window {
@@ -27,7 +29,9 @@ declare global {
 export default function Home() {
   const { setTheme } = useTheme()
   const playerRef = useRef<YouTube>(null);
-  const videoId = '4SIfagZps6w';
+  // const videoId = '4SIfagZps6w';
+  const [videoId, setVideoId] = useState('4SIfagZps6w'); // デフォルトは原神のBGM
+  const [inputUrl, setInputUrl] = useState(''); // 動画URL
   const [inputValue, setInputValue] = useState(30);
 
   useEffect(() => {
@@ -38,6 +42,21 @@ export default function Home() {
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     }
   }, []);
+
+  useEffect(() => {
+    const loadVideo = async () => {
+      if (playerRef.current) {
+        const player = await playerRef.current.getInternalPlayer();
+        if (player) {
+          player.loadVideoById(videoId);
+        }
+      }
+    };
+  
+    (async () => {
+      await loadVideo();
+    })();
+  }, [videoId]);
 
   const handleClick = async () => {
     if (playerRef.current) {
@@ -50,6 +69,25 @@ export default function Home() {
           player.stopVideo();
         }
       }, inputValue * 60000);
+    }
+  };
+
+  const handleConfirm = () => {
+    try {
+      const url = new URL(inputUrl);
+      let _videoId;
+      if (url.hostname === "youtu.be") {
+        _videoId = url.pathname.slice(1);
+      } else if (url.hostname === "www.youtube.com") {
+        _videoId = new URLSearchParams(url.search).get("v");
+      }
+      if (_videoId) {
+        setVideoId(_videoId);
+      } else {
+        console.error("Invalid video ID");
+      }
+    } catch (e) {
+      console.error("Invalid URL");
     }
   };
 
@@ -88,6 +126,10 @@ export default function Home() {
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pl-2">
           min.
         </h1>
+      </div>
+      <div className="flex w-full max-w-sm items-center space-x-2 pt-4">
+        <Input type="url" placeholder="URL" value={inputUrl} onChange={e => setInputUrl(e.target.value)} />
+        <Button type="submit" onClick={handleConfirm}>Confirm</Button>
       </div>
       <div className="flex items-center justify-center pt-4">
         <Button onClick={handleClick}>Oyasumi!</Button>
