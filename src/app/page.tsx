@@ -79,7 +79,7 @@ export default function Home() {
       </div>
       <div className="flex flex-col sm:flex-row items-center justify-center px-4 sm:px-0">
         <Space wrap>
-          <InputNumber size="large" min={1} max={120} defaultValue={30} onChange={value => {
+          <InputNumber size="large" min={1} max={240} defaultValue={60} onChange={value => {
             if (value !== null) {
               setInputValue(value);
             }
