@@ -155,16 +155,18 @@ export default function Home() {
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center px-4 py-2 sm:px-0">
               <Input type="url" placeholder="URL" value={inputUrl} onChange={e => setInputUrl(e.target.value)} />
-              <Button type="submit" onClick={handleConfirm}>Confirm</Button>
+              <Button type="submit" className="ml-2" onClick={handleConfirm}>Confirm</Button>
             </div>
-            <div className="flex items-center justify-center pt-4">
+            <div className="flex items-center justify-center pt-2">
               <Button onClick={handleClick}>Oyasumi!</Button>
             </div>
-            <div className="flex items-center justify-center pt-4 aspect-w-16 aspect-h-9 max-w-full">
+            <div className="flex items-center justify-center pt-2 aspect-w-16 aspect-h-9 max-w-full">
               <YouTube videoId={videoId} ref={playerRef} className="w-full h-full" />
             </div>
           </TabsContent>
-          <TabsContent value="favorite">Change your favorite here.</TabsContent>
+          <TabsContent value="favorite">
+            
+          </TabsContent>
         </Tabs>
       </div>
 
