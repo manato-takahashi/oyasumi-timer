@@ -18,6 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 
 declare global {
   interface Window {
@@ -33,7 +35,15 @@ export default function Home() {
   const [videoId, setVideoId] = useState('4SIfagZps6w'); // デフォルトは原神のBGM
   const [inputUrl, setInputUrl] = useState(''); // 動画URL
   const [inputValue, setInputValue] = useState(30);
+  const [favoriteList, setFavoriteList] = useState<string[]>(() => {
+    // ローカルストレージからお気に入りリストを取得
+    const localStorageFavoriteList = localStorage.getItem('favoriteList');
 
+    // 配列に変換
+    return JSON.parse(localStorageFavoriteList ?? '[]');
+  });
+
+  // ページマウント時に発火
   useEffect(() => {
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -43,6 +53,7 @@ export default function Home() {
     }
   }, []);
 
+  // videoIdが変更されたら発火
   useEffect(() => {
     const loadVideo = async () => {
       if (playerRef.current) {
@@ -57,6 +68,12 @@ export default function Home() {
       await loadVideo();
     })();
   }, [videoId]);
+
+  // お気に入りリストが変更されたら発火
+  useEffect(() => {
+    // ローカルストレージにお気に入りリストを保存
+    localStorage.setItem('favoriteList', JSON.stringify(favoriteList));
+  }, [favoriteList]);
 
   const handleClick = async () => {
     if (playerRef.current) {
@@ -93,6 +110,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen overflow-x-hidden">
+
       <div className="absolute top-2 right-2 p-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -115,28 +133,41 @@ export default function Home() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex flex-col sm:flex-row items-center justify-center px-4 sm:px-0">
-        <Space wrap>
-          <InputNumber size="large" min={1} max={240} defaultValue={60} onChange={value => {
-            if (value !== null) {
-              setInputValue(value);
-            }
-          }} />
-        </Space>
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pl-2">
-          min.
-        </h1>
+
+      <div className="flex items-center justify-center">
+        <Tabs defaultValue="home" className="w-full">
+          <TabsList className="flex justify-center">
+            <TabsTrigger value="home">Home</TabsTrigger>
+            <TabsTrigger value="favorite">Favorite</TabsTrigger>
+          </TabsList>
+          <TabsContent value="home">
+            <div className="flex flex-col sm:flex-row items-center justify-center px-4 sm:px-0">
+              <Space wrap>
+                <InputNumber size="large" min={1} max={240} defaultValue={60} onChange={value => {
+                  if (value !== null) {
+                    setInputValue(value);
+                  }
+                }} />
+              </Space>
+              <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pl-2">
+                min.
+              </h1>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center px-4 py-2 sm:px-0">
+              <Input type="url" placeholder="URL" value={inputUrl} onChange={e => setInputUrl(e.target.value)} />
+              <Button type="submit" onClick={handleConfirm}>Confirm</Button>
+            </div>
+            <div className="flex items-center justify-center pt-4">
+              <Button onClick={handleClick}>Oyasumi!</Button>
+            </div>
+            <div className="flex items-center justify-center pt-4 aspect-w-16 aspect-h-9 max-w-full">
+              <YouTube videoId={videoId} ref={playerRef} className="w-full h-full" />
+            </div>
+          </TabsContent>
+          <TabsContent value="favorite">Change your favorite here.</TabsContent>
+        </Tabs>
       </div>
-      <div className="flex w-full max-w-sm items-center space-x-2 pt-4">
-        <Input type="url" placeholder="URL" value={inputUrl} onChange={e => setInputUrl(e.target.value)} />
-        <Button type="submit" onClick={handleConfirm}>Confirm</Button>
-      </div>
-      <div className="flex items-center justify-center pt-4">
-        <Button onClick={handleClick}>Oyasumi!</Button>
-      </div>
-      <div className="flex items-center justify-center pt-4 aspect-w-16 aspect-h-9 max-w-full">
-        <YouTube videoId={videoId} ref={playerRef} className="w-full h-full" />
-      </div>
+
     </div>
   );
 }
