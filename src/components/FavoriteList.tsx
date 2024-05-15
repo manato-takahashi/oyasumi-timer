@@ -9,14 +9,14 @@ type Props = {
 export const FavoriteList = ({ favoriteList, deleteFavorite }: Props) => {
     return (
         <>
-        <div className="space-y-3 rounded bg-slate-800">
+        <div className="space-y-1 rounded">
             {favoriteList.filter(video => video.favorite).map((video) => (
                 <div 
                     key={video.id}
                     className="flex items-center rounded p-2 space-y-4"
                 >
-                    <div className="flex justify-between items-center gap-3 w-full">
-                        <span className="flex items-center">{video.title}</span>
+                    <div className="flex justify-between items-center gap-3 w-full rounded bg-slate-800 px-4 py-4">
+                        <span className="flex cursor-pointer items-center rounded hover:text-blue-500">{video.title}</span>
                         <div className="flex items-center">
                             <input
                                 type="checkbox"

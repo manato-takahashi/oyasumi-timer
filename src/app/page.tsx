@@ -41,11 +41,15 @@ export default function Home() {
   const [favoriteList, setFavoriteList] = useState<Video[]>([]);
 
   useEffect(() => {
-      // ローカルストレージからお気に入りリストを取得
-      const localStorageFavoriteList = localStorage.getItem('favoriteList');
-
-      // 配列に変換
-      setFavoriteList(JSON.parse(localStorageFavoriteList ?? '[]'));
+    // ローカルストレージからお気に入りリストを取得
+    const localStorageFavoriteList = localStorage.getItem('favoriteList');
+  
+    // 配列に変換
+    const parsedList = JSON.parse(localStorageFavoriteList ?? '[]');
+    setFavoriteList(parsedList);
+    
+    console.log("hello App");
+    console.log(parsedList);
   }, []);
 
   // ページマウント時に発火
@@ -130,8 +134,8 @@ export default function Home() {
     setFavoriteList((prevFavoriteList) => {
       const newFavoriteList = prevFavoriteList.filter((video) => video.id !== id);
       
-      // Update local storage
-      localStorage.setItem('favoriteList', JSON.stringify(newFavoriteList));
+      // // Update local storage
+      // localStorage.setItem('favoriteList', JSON.stringify(newFavoriteList));
       
       return newFavoriteList;
     });
