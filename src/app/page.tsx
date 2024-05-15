@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { FavoriteList } from "@/components/FavoriteList"
+import { AddFavoriteForm } from "@/components/AddFavoriteForm";
 import { Video } from "@/types/video"
 
 declare global {
@@ -38,11 +39,11 @@ export default function Home() {
   const [inputUrl, setInputUrl] = useState(''); // 動画URL
   const [inputValue, setInputValue] = useState(30);
   const [favoriteList, setFavoriteList] = useState<Video[]>(() => {
-    // ローカルストレージからお気に入りリストを取得
-    const localStorageFavoriteList = localStorage.getItem('favoriteList');
+  // ローカルストレージからお気に入りリストを取得
+  const localStorageFavoriteList = localStorage.getItem('favoriteList');
 
-    // 配列に変換
-    return JSON.parse(localStorageFavoriteList ?? '[]');
+  // 配列に変換
+  return JSON.parse(localStorageFavoriteList ?? '[]');
   });
 
   // ページマウント時に発火
@@ -110,17 +111,27 @@ export default function Home() {
     }
   };
 
-  const changeFavorited = (id: number) => {
+  const addFavorite = (title: string, url: string) => {
     setFavoriteList((prevFavoriteList) => {
-      return prevFavoriteList.map((video) => {
-        if (video.id === id) {
-          return {
-            ...video,
-            favorite: !video.favorite,
-          };
-        }
-        return video;
-      });
+      const newFavorite = {
+        id: Date.now(),
+        title,
+        url,
+        favorite: true,
+      };
+
+      return [newFavorite, ...prevFavoriteList];
+    });
+  };
+
+  const deleteFavorite = (id: number) => {
+    setFavoriteList((prevFavoriteList) => {
+      const newFavoriteList = prevFavoriteList.filter((video) => video.id !== id);
+      
+      // Update local storage
+      localStorage.setItem('favoriteList', JSON.stringify(newFavoriteList));
+      
+      return newFavoriteList;
     });
   };
 
@@ -182,7 +193,10 @@ export default function Home() {
           </TabsContent>
           <TabsContent value="favorite">
             <div className="flex flex-col sm:flex-row items-center justify-center px-4 sm:px-0">
-              <FavoriteList favoriteList={favoriteList} changeFavorited={changeFavorited} />
+              <AddFavoriteForm addFavorite={addFavorite}/>
+            </div>
+            <div className="mx-auto mt-10 max-w-xl space-y-10">
+              <FavoriteList favoriteList={favoriteList} deleteFavorite={deleteFavorite}/>
             </div>
           </TabsContent>
         </Tabs>

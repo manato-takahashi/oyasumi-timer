@@ -1,37 +1,44 @@
 import { Video } from '../types/video';
-import { Heart } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 type Props = {
     favoriteList: Video[];
-    changeFavorited: (id: number) => void;
+    deleteFavorite: (id: number) => void;
 };
 
-export const FavoriteList = ({ favoriteList, changeFavorited }: Props) => {
+export const FavoriteList = ({ favoriteList, deleteFavorite }: Props) => {
     return (
-        <div className="space-y-3">
+        <>
+        <div className="space-y-3 rounded bg-slate-800">
             {favoriteList.filter(video => video.favorite).map((video) => (
                 <div 
                     key={video.id}
-                    className="flex items-center rounded p-2"
+                    className="flex items-center rounded p-2 space-y-4"
                 >
-                    <label className="flex grow items-center gap-3 hover:cursor-pointer">
-                        <span className="flex items-center justify-start">{video.title}</span>
-                        <div className="flex items-center justify-end">
+                    <div className="flex justify-between items-center gap-3 w-full">
+                        <span className="flex items-center">{video.title}</span>
+                        <div className="flex items-center">
                             <input
                                 type="checkbox"
                                 className="sr-only"
                                 checked={video.favorite}
-                                onChange={() => changeFavorited(video.id)}
+                                onChange={() => deleteFavorite(video.id)}
                             />
                             <label>
-                                <Heart
-                                    className="cursor-pointer text-red-500"
+                                <Trash2
+                                    className="cursor-pointer text-red-300 hover:text-red-700"
+                                    onClick={() => deleteFavorite(video.id)}
                                 />
                             </label>
                         </div>
-                    </label>
+                    </div>
                 </div>
             ))}
         </div>
+        {/* お気に入りがない場合 */}
+        {favoriteList.filter(video => video.favorite).length === 0 && (
+            <p className="text-center text-sm">お気に入りがありません</p>
+        )}
+        </>
     );
 };
