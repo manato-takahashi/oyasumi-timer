@@ -38,13 +38,15 @@ export default function Home() {
   const [videoId, setVideoId] = useState('4SIfagZps6w'); // デフォルトは原神のBGM
   const [inputUrl, setInputUrl] = useState(''); // 動画URL
   const [inputValue, setInputValue] = useState(30);
-  const [favoriteList, setFavoriteList] = useState<Video[]>(() => {
-  // ローカルストレージからお気に入りリストを取得
-  const localStorageFavoriteList = localStorage.getItem('favoriteList');
+  const [favoriteList, setFavoriteList] = useState<Video[]>([]);
 
-  // 配列に変換
-  return JSON.parse(localStorageFavoriteList ?? '[]');
-  });
+  useEffect(() => {
+      // ローカルストレージからお気に入りリストを取得
+      const localStorageFavoriteList = localStorage.getItem('favoriteList');
+
+      // 配列に変換
+      setFavoriteList(JSON.parse(localStorageFavoriteList ?? '[]'));
+  }, []);
 
   // ページマウント時に発火
   useEffect(() => {
