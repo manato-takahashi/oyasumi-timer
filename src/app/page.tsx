@@ -169,7 +169,7 @@ export default function Home() {
 
       <div className="flex items-center justify-center">
         <Tabs defaultValue="home" className="w-full">
-          <TabsList className="flex justify-center">
+          <TabsList className="flex justify-center fixed top-6 left-6">
             <TabsTrigger value="home">Home</TabsTrigger>
             <TabsTrigger value="favorite">Favorite</TabsTrigger>
           </TabsList>
