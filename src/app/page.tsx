@@ -117,6 +117,25 @@ export default function Home() {
     }
   };
 
+  const handleConfirmFromFavorite = (url: string) => {
+    try {
+      const _url = new URL(url);
+      let _videoId;
+      if (_url.hostname === "youtu.be") {
+        _videoId = _url.pathname.slice(1);
+      } else if (_url.hostname === "www.youtube.com") {
+        _videoId = new URLSearchParams(_url.search).get("v");
+      }
+      if (_videoId) {
+        setVideoId(_videoId);
+      } else {
+        console.error("Invalid video ID");
+      }
+    } catch (e) {
+      console.error("Invalid URL");
+    }
+  }
+
   const addFavorite = (title: string, url: string) => {
     setFavoriteList((prevFavoriteList) => {
       const newFavorite = {
@@ -202,7 +221,7 @@ export default function Home() {
               <AddFavoriteForm addFavorite={addFavorite}/>
             </div>
             <div className="mx-auto mt-10 max-w-xl space-y-10">
-              <FavoriteList favoriteList={favoriteList} deleteFavorite={deleteFavorite}/>
+              <FavoriteList favoriteList={favoriteList} deleteFavorite={deleteFavorite} handleConfirmFromFavorite={handleConfirmFromFavorite} />
             </div>
           </TabsContent>
         </Tabs>
