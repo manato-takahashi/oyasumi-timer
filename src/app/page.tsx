@@ -20,6 +20,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+import { FavoriteList } from "@/components/FavoriteList"
+import { Video } from "@/types/video"
 
 declare global {
   interface Window {
@@ -35,7 +37,7 @@ export default function Home() {
   const [videoId, setVideoId] = useState('4SIfagZps6w'); // デフォルトは原神のBGM
   const [inputUrl, setInputUrl] = useState(''); // 動画URL
   const [inputValue, setInputValue] = useState(30);
-  const [favoriteList, setFavoriteList] = useState<string[]>(() => {
+  const [favoriteList, setFavoriteList] = useState<Video[]>(() => {
     // ローカルストレージからお気に入りリストを取得
     const localStorageFavoriteList = localStorage.getItem('favoriteList');
 
@@ -108,6 +110,20 @@ export default function Home() {
     }
   };
 
+  const changeFavorited = (id: number) => {
+    setFavoriteList((prevFavoriteList) => {
+      return prevFavoriteList.map((video) => {
+        if (video.id === id) {
+          return {
+            ...video,
+            favorite: !video.favorite,
+          };
+        }
+        return video;
+      });
+    });
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen overflow-x-hidden">
 
@@ -165,7 +181,9 @@ export default function Home() {
             </div>
           </TabsContent>
           <TabsContent value="favorite">
-            
+            <div className="flex flex-col sm:flex-row items-center justify-center px-4 sm:px-0">
+              <FavoriteList favoriteList={favoriteList} changeFavorited={changeFavorited} />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
